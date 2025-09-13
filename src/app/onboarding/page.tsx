@@ -7,6 +7,7 @@ import QuestionSection from "@/components/common/QuestionSection"
 import SelectableOption from "@/components/common/SelectableOption"
 import TextArea from "@/components/common/TextArea"
 import { Button } from "@/components/common/Button"
+import { getRecommendationType } from "@/lib/utils"
 
 export default function Onboarding() {
   const router = useRouter()
@@ -53,28 +54,18 @@ export default function Onboarding() {
     { id: "none", label: "No, ninguno de los anteriores" },
   ]
 
-  // Función para validar si se puede continuar
   const canContinue = () => {
     switch (currentQuestion) {
       case 1:
-        // Debe tener al menos una opción seleccionada
         if (selectedOptions.length === 0) return false
-        // Si seleccionó "otro", debe tener texto
         if (selectedOptions.includes("other") && otherText.trim() === "") return false
         return true
-      
       case 2:
-        // Debe tener una opción seleccionada
         return familyHistory !== ""
-      
       case 3:
-        // Debe tener al menos una opción seleccionada
         return medicalConditions.length > 0
-      
       case 4:
-        // Debe tener al menos una opción seleccionada
         return mentalHealthConditions.length > 0
-      
       default:
         return false
     }
@@ -128,6 +119,19 @@ export default function Onboarding() {
       setCurrentQuestion(3)
     } else if (currentQuestion === 3) {
       setCurrentQuestion(4)
+    } else if (currentQuestion === 4) {
+      const recommendationType = getRecommendationType(medicalConditions)
+      
+      const onboardingData = {
+        scalpIssues: selectedOptions,
+        otherText,
+        familyHistory,
+        medicalConditions,
+        mentalHealthConditions
+      }
+      sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData))
+      
+      router.push(`/recommendation?type=${recommendationType}`)
     }
   }
 
@@ -247,7 +251,7 @@ export default function Onboarding() {
           size="xl"
           className="w-full"
         >
-          Continuar
+          {currentQuestion === 4 ? "Finalizar" : "Continuar"}
         </Button>
       </div>
     </OnboardingLayout>
