@@ -1,15 +1,17 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { ArrowLeft, MessageCircle, Check } from "lucide-react"
 
 export default function Onboarding() {
+  const router = useRouter()
   const [currentQuestion, setCurrentQuestion] = useState(1)
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(["none"])
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [otherText, setOtherText] = useState("")
   const [familyHistory, setFamilyHistory] = useState("")
-  const [medicalConditions, setMedicalConditions] = useState<string[]>(["none"])
-  const [mentalHealthConditions, setMentalHealthConditions] = useState<string[]>(["none"])
+  const [medicalConditions, setMedicalConditions] = useState<string[]>([])
+  const [mentalHealthConditions, setMentalHealthConditions] = useState<string[]>([])
 
   const options = [
     { id: "pain", label: "Dolor repentino y/o enrojecimiento" },
@@ -46,6 +48,33 @@ export default function Onboarding() {
     { id: "schizophrenia", label: "Esquizofrenia" },
     { id: "none", label: "No, ninguno de los anteriores" },
   ]
+
+  // Función para validar si se puede continuar
+  const canContinue = () => {
+    switch (currentQuestion) {
+      case 1:
+        // Debe tener al menos una opción seleccionada
+        if (selectedOptions.length === 0) return false
+        // Si seleccionó "otro", debe tener texto
+        if (selectedOptions.includes("other") && otherText.trim() === "") return false
+        return true
+      
+      case 2:
+        // Debe tener una opción seleccionada
+        return familyHistory !== ""
+      
+      case 3:
+        // Debe tener al menos una opción seleccionada
+        return medicalConditions.length > 0
+      
+      case 4:
+        // Debe tener al menos una opción seleccionada
+        return mentalHealthConditions.length > 0
+      
+      default:
+        return false
+    }
+  }
 
   const handleOptionChange = (optionId: string) => {
     if (optionId === "none") {
@@ -87,6 +116,8 @@ export default function Onboarding() {
   }
 
   const handleContinue = () => {
+    if (!canContinue()) return
+    
     if (currentQuestion === 1) {
       setCurrentQuestion(2)
     } else if (currentQuestion === 2) {
@@ -97,7 +128,9 @@ export default function Onboarding() {
   }
 
   const handleBack = () => {
-    if (currentQuestion === 2) {
+    if (currentQuestion === 1) {
+      router.push("/")
+    } else if (currentQuestion === 2) {
       setCurrentQuestion(1)
     } else if (currentQuestion === 3) {
       setCurrentQuestion(2)
@@ -347,7 +380,14 @@ export default function Onboarding() {
       <div className="px-6 pb-8">
         <button
           onClick={handleContinue}
-          className="w-full bg-[#3b3345] text-white py-4 rounded-full text-lg font-semibold hover:bg-[#292929] transition-colors"
+          disabled={!canContinue()}
+          className={`
+            w-full py-4 rounded-full text-lg font-semibold transition-colors
+            ${canContinue() 
+              ? "bg-[#3b3345] text-white hover:bg-[#292929]" 
+              : "bg-[#e0e0e0] text-[#999999] cursor-not-allowed"
+            }
+          `}
         >
           Continuar
         </button>
