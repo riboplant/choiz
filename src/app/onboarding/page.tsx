@@ -2,7 +2,11 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, MessageCircle, Check } from "lucide-react"
+import OnboardingLayout from "@/components/layout/OnboardingLayout"
+import QuestionSection from "@/components/common/QuestionSection"
+import SelectableOption from "@/components/common/SelectableOption"
+import TextArea from "@/components/common/TextArea"
+import { Button } from "@/components/common/Button"
 
 export default function Onboarding() {
   const router = useRouter()
@@ -139,259 +143,113 @@ export default function Onboarding() {
     }
   }
 
-
-  const getProgressWidth = () => {
+  const getProgress = () => {
     switch (currentQuestion) {
-      case 1:
-        return "20%"
-      case 2:
-        return "40%"
-      case 3:
-        return "60%"
-      case 4:
-        return "80%"
-      default:
-        return "20%"
+      case 1: return 20
+      case 2: return 40
+      case 3: return 60
+      case 4: return 80
+      default: return 20
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f8f8] flex flex-col">
-      {/* Header */}
-      <div className="bg-white px-4 py-4 flex items-center justify-between">
-        <ArrowLeft className="w-6 h-6 text-[#3b3345] cursor-pointer" onClick={handleBack} />
-        <h1 className="text-xl logo-font font-light text-[#3b3345]">Choiz</h1>
-        <MessageCircle className="w-6 h-6 text-[#3b3345]" />
-      </div>
+    <OnboardingLayout 
+      onBack={handleBack} 
+      progress={getProgress()}
+    >
+      {/* Question Content */}
+      {currentQuestion === 1 && (
+        <>
+          <QuestionSection
+            title="¿Tienes algún problema en el cuero cabelludo?"
+            subtitle="Selecciona todas las opciones que apliquen."
+          >
+            {options.map((option) => (
+              <SelectableOption
+                key={option.id}
+                id={option.id}
+                label={option.label}
+                isSelected={selectedOptions.includes(option.id)}
+                isNoneOption={option.id === "none"}
+                onClick={handleOptionChange}
+              />
+            ))}
+          </QuestionSection>
 
-      {/* Progress Bar */}
-      <div className="bg-white px-4 pb-2">
-        <div className="w-full bg-[#e0e0e0] h-1 rounded-full">
-          <div
-            className="bg-[#6042aa] h-1 rounded-full transition-all duration-300"
-            style={{ width: getProgressWidth() }}
-          ></div>
-        </div>
-      </div>
+          {selectedOptions.includes("other") && (
+            <TextArea
+              value={otherText}
+              onChange={setOtherText}
+              title="Cuéntanos cuál es el problema"
+            />
+          )}
+        </>
+      )}
 
-      {/* Main Content */}
-      <div className="flex-1 px-6 py-4">
-        {currentQuestion === 1 ? (
-          // Question 1 Content
-          <>
-            <h2 className="text-2xl font-semibold text-[#3b3345] mb-4 leading-tight">
-              ¿Tienes algún problema en el cuero cabelludo?
-            </h2>
+      {currentQuestion === 2 && (
+        <QuestionSection title="¿Hay antecedentes de caída del cabello en tu familia?">
+          {familyHistoryOptions.map((option) => (
+            <SelectableOption
+              key={option.id}
+              id={option.id}
+              label={option.label}
+              isSelected={familyHistory === option.id}
+              isNoneOption={true}
+              onClick={setFamilyHistory}
+            />
+          ))}
+        </QuestionSection>
+      )}
 
-            <p className="text-[#666768] mb-8 text-base">Selecciona todas las opciones que apliquen.</p>
+      {currentQuestion === 3 && (
+        <QuestionSection
+          title="¿Tienes o has tenido alguna de las siguientes condiciones médicas?"
+          subtitle="Selecciona todas las opciones que apliquen."
+        >
+          {medicalConditionsOptions.map((option) => (
+            <SelectableOption
+              key={option.id}
+              id={option.id}
+              label={option.label}
+              isSelected={medicalConditions.includes(option.id)}
+              isNoneOption={option.id === "none"}
+              onClick={handleMedicalConditionChange}
+            />
+          ))}
+        </QuestionSection>
+      )}
 
-            {/* Options */}
-            <div className="space-y-4 mb-8">
-              {options.map((option) => {
-                const isSelected = selectedOptions.includes(option.id)
-                const isNoneOption = option.id === "none"
-
-                return (
-                  <div
-                    key={option.id}
-                    onClick={() => handleOptionChange(option.id)}
-                    className={`
-                      flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all
-                      ${
-                        isSelected
-                          ? isNoneOption
-                            ? "border-[#3b3345] bg-white"
-                            : "border-[#6042aa] bg-white"
-                          : "border-[#e0e0e0] bg-white hover:border-[#d3d3d3]"
-                      }
-                    `}
-                  >
-                    <div
-                      className={`
-                      w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0
-                      ${
-                        isSelected
-                          ? isNoneOption
-                            ? "border-[#3b3345] bg-[#3b3345]"
-                            : "border-[#6042aa] bg-[#6042aa]"
-                          : "border-[#d3d3d3]"
-                      }
-                    `}
-                    >
-                      {isSelected && <Check className="w-4 h-4 text-white" />}
-                    </div>
-                    <span className="text-[#3b3345] text-base font-medium">{option.label}</span>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Other Text Input */}
-            {selectedOptions.includes("other") && (
-              <div className="mb-8">
-                <h3 className="text-base font-medium text-[#3b3345] mb-4">Cuéntanos cuál es el problema</h3>
-                <textarea
-                  value={otherText}
-                  onChange={(e) => setOtherText(e.target.value)}
-                  placeholder="Inserta tu respuesta aquí"
-                  className="w-full p-4 border-2 border-[#e0e0e0] rounded-xl bg-white text-[#3b3345] placeholder-[#666768] resize-none focus:border-[#6042aa] focus:outline-none transition-colors"
-                  rows={4}
-                />
-              </div>
-            )}
-          </>
-        ) : currentQuestion === 2 ? (
-          <>
-            <h2 className="text-2xl font-semibold text-[#3b3345] mb-8 leading-tight">
-              ¿Hay antecedentes de caída del cabello en tu familia?
-            </h2>
-
-            {/* Family History Options */}
-            <div className="space-y-4 mb-8">
-              {familyHistoryOptions.map((option) => {
-                const isSelected = familyHistory === option.id
-
-                return (
-                  <div
-                    key={option.id}
-                    onClick={() => setFamilyHistory(option.id)}
-                    className={`
-                      flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all
-                      ${isSelected ? "border-[#3b3345] bg-white" : "border-[#e0e0e0] bg-white hover:border-[#d3d3d3]"}
-                    `}
-                  >
-                    <div
-                      className={`
-                      w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0
-                      ${isSelected ? "border-[#3b3345] bg-[#3b3345]" : "border-[#d3d3d3]"}
-                    `}
-                    >
-                      {isSelected && <Check className="w-4 h-4 text-white" />}
-                    </div>
-                    <span className="text-[#3b3345] text-base font-medium">{option.label}</span>
-                  </div>
-                )
-              })}
-            </div>
-
-          </>
-        ) : currentQuestion === 3 ? (
-          <>
-            <h2 className="text-2xl font-semibold text-[#3b3345] mb-4 leading-tight">
-              ¿Tienes o has tenido alguna de las siguientes condiciones médicas?
-            </h2>
-
-            <p className="text-[#666768] mb-8 text-base">Selecciona todas las opciones que apliquen.</p>
-
-            {/* Medical Conditions Options */}
-            <div className="space-y-4 mb-8">
-              {medicalConditionsOptions.map((option) => {
-                const isSelected = medicalConditions.includes(option.id)
-                const isNoneOption = option.id === "none"
-
-                return (
-                  <div
-                    key={option.id}
-                    onClick={() => handleMedicalConditionChange(option.id)}
-                    className={`
-                      flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all
-                      ${
-                        isSelected
-                          ? isNoneOption
-                            ? "border-[#3b3345] bg-white"
-                            : "border-[#6042aa] bg-white"
-                          : "border-[#e0e0e0] bg-white hover:border-[#d3d3d3]"
-                      }
-                    `}
-                  >
-                    <div
-                      className={`
-                      w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0
-                      ${
-                        isSelected
-                          ? isNoneOption
-                            ? "border-[#3b3345] bg-[#3b3345]"
-                            : "border-[#6042aa] bg-[#6042aa]"
-                          : "border-[#d3d3d3]"
-                      }
-                    `}
-                    >
-                      {isSelected && <Check className="w-4 h-4 text-white" />}
-                    </div>
-                    <span className="text-[#3b3345] text-base font-medium">{option.label}</span>
-                  </div>
-                )
-              })}
-            </div>
-          </>
-        ) : (
-          <>
-            <h2 className="text-2xl font-semibold text-[#3b3345] mb-4 leading-tight">
-              ¿Tienes o has tenido alguna de estas condiciones de salud mental?
-            </h2>
-
-            <p className="text-[#666768] mb-8 text-base">Selecciona todas las opciones que apliquen.</p>
-
-            {/* Mental Health Conditions Options */}
-            <div className="space-y-4 mb-8">
-              {mentalHealthOptions.map((option) => {
-                const isSelected = mentalHealthConditions.includes(option.id)
-                const isNoneOption = option.id === "none"
-
-                return (
-                  <div
-                    key={option.id}
-                    onClick={() => handleMentalHealthConditionChange(option.id)}
-                    className={`
-                      flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all
-                      ${
-                        isSelected
-                          ? isNoneOption
-                            ? "border-[#3b3345] bg-white"
-                            : "border-[#6042aa] bg-white"
-                          : "border-[#e0e0e0] bg-white hover:border-[#d3d3d3]"
-                      }
-                    `}
-                  >
-                    <div
-                      className={`
-                      w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0
-                      ${
-                        isSelected
-                          ? isNoneOption
-                            ? "border-[#3b3345] bg-[#3b3345]"
-                            : "border-[#6042aa] bg-[#6042aa]"
-                          : "border-[#d3d3d3]"
-                      }
-                    `}
-                    >
-                      {isSelected && <Check className="w-4 h-4 text-white" />}
-                    </div>
-                    <span className="text-[#3b3345] text-base font-medium">{option.label}</span>
-                  </div>
-                )
-              })}
-            </div>
-          </>
-        )}
-      </div>
+      {currentQuestion === 4 && (
+        <QuestionSection
+          title="¿Tienes o has tenido alguna de estas condiciones de salud mental?"
+          subtitle="Selecciona todas las opciones que apliquen."
+        >
+          {mentalHealthOptions.map((option) => (
+            <SelectableOption
+              key={option.id}
+              id={option.id}
+              label={option.label}
+              isSelected={mentalHealthConditions.includes(option.id)}
+              isNoneOption={option.id === "none"}
+              onClick={handleMentalHealthConditionChange}
+            />
+          ))}
+        </QuestionSection>
+      )}
 
       {/* Continue Button */}
-      <div className="px-6 pb-8">
-        <button
+      <div className="pb-4">
+        <Button
           onClick={handleContinue}
           disabled={!canContinue()}
-          className={`
-            w-full py-4 rounded-full text-lg font-semibold transition-colors
-            ${canContinue() 
-              ? "bg-[#3b3345] text-white hover:bg-[#292929]" 
-              : "bg-[#e0e0e0] text-[#999999] cursor-not-allowed"
-            }
-          `}
+          variant="choiz"
+          size="xl"
+          className="w-full"
         >
           Continuar
-        </button>
+        </Button>
       </div>
-    </div>
+    </OnboardingLayout>
   )
 }
