@@ -52,12 +52,16 @@ function RecommendationContent() {
           <p className="text-[#7d7d7d] text-sm mb-8">{config.subtitle}</p>
 
           {/* Product Image */}
-          <div className="flex justify-center mb-22">
+          <div className={`flex justify-center ${
+            type === 'dutaxidil-gel' 
+              ? 'mb-10 mt-10' 
+              : 'mb-22 -mt-4'
+          }`}>
             <div className="relative">
               <img
                 src={config.image}
                 alt={config.imageAlt}
-                className="w-32 h-auto scale-250 -mt-4"
+                className="w-32 h-auto scale-250"
               />
             </div>
           </div>
