@@ -3,7 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Definir la fuente Appetite */
+
 @font-face {
     font-family: 'Appetite';
     src: url('/fonts/Appetite-Regular.ttf') format('truetype');
@@ -145,7 +145,7 @@
         position: relative;
     }
 
-    /* Responsivo para móviles */
+    
     @media (max-width: 768px) {
         .rounded-panel {
             border-top-left-radius: 1.5rem;

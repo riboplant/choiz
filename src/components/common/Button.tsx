@@ -17,7 +17,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md",
         ghost: "hover:bg-accent hover:text-accent-foreground rounded-md",
         link: "text-primary underline-offset-4 hover:underline",
-        // Nuevas variantes para tu app
+        
         choiz: "bg-[#3b3345] text-white hover:bg-[#292929] rounded-full",
         "choiz-disabled": "bg-[#e0e0e0] text-[#999999] cursor-not-allowed rounded-full",
       },
@@ -25,7 +25,7 @@ const buttonVariants = cva(
         default: "h-10 px-4 py-2",
         sm: "h-9 px-3",
         lg: "h-11 px-8",
-        xl: "h-14 px-8 text-lg font-semibold", // Para botones grandes como "Continuar"
+        xl: "h-14 px-8 text-lg font-semibold", 
         icon: "h-10 w-10",
       },
     },

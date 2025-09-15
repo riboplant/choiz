@@ -33,7 +33,7 @@ function RecommendationContent() {
     const config: RecommendationConfig = recommendations[type] || recommendations["dutaxidil-capsulas"]
 
     useEffect(() => {
-        // Load onboarding data from sessionStorage
+        
         const savedData = sessionStorage.getItem('onboardingData')
         if (savedData) {
             setOnboardingData(JSON.parse(savedData))
@@ -142,7 +142,7 @@ function RecommendationContent() {
             })
             console.log("================================")
 
-            // También mostrar en alert para que sea visible
+            
             const formattedResponses = Object.entries(responses)
                 .map(([question, answer]) => `${question}: ${answer}`)
                 .join('\n\n')
