@@ -33,7 +33,7 @@ function RecommendationContent() {
     const config: RecommendationConfig = recommendations[type] || recommendations["dutaxidil-capsulas"]
 
     useEffect(() => {
-        
+
         const savedData = sessionStorage.getItem('onboardingData')
         if (savedData) {
             setOnboardingData(JSON.parse(savedData))
@@ -80,8 +80,10 @@ function RecommendationContent() {
         fetchFAQData()
     }, [])
 
-    const getOptionLabel = (optionId: string, category: string) => {
-        const optionMaps = {
+    type Category = 'scalpIssues' | 'familyHistory' | 'medicalConditions' | 'mentalHealthConditions';
+
+    const getOptionLabel = (optionId: string, category: Category) => {
+        const optionMaps: Record<Category, Record<string, string>> = {
             scalpIssues: {
                 "pain": "Dolor repentino y/o enrojecimiento",
                 "dandruff": "Caspa",
@@ -142,7 +144,7 @@ function RecommendationContent() {
             })
             console.log("================================")
 
-            
+
             const formattedResponses = Object.entries(responses)
                 .map(([question, answer]) => `${question}: ${answer}`)
                 .join('\n\n')
